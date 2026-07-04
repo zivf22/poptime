@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pop Time</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      overflow: hidden;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ── Announcement bar ── */
+    .announce-bar {
+      background: #F3A31D;
+      border-bottom: 2px solid #111;
+      height: 38px;
+      line-height: 38px;
+      text-align: center;
+      font-family: 'Annai MN', sans-serif;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #111;
+    }
+
+    /* ── Nav bar ── */
+    .nav-bar {
+      background: #FFE5BB;
+      border-bottom: 2px solid #111;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 2cm;
+    }
+
+    .nav-star {
+      font-size: 22px;
+      color: #111;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .nav-link {
+      border: 2px solid #111;
+      padding: 8px 24px;
+      font-family: 'Annai MN', sans-serif;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #111;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .nav-link.active {
+      background: #111;
+      color: #FFE5BB;
+    }
+
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 2cm;
+    }
+
+    .nav-right .nav-star {
+      margin-left: 12px;
+    }
+
+    /* ── POP TIME logo stamp ── */
+    .logo-stamp {
+      position: absolute;
+      top: calc(80px - 2.5cm);
+      left: calc(28px - 2.5cm);
+      z-index: 50;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .logo-stamp img {
+      width: calc(192px + 1.2cm);
+      mix-blend-mode: screen;
+      filter: invert(1) brightness(0.75) sepia(1);
+    }
+
+    /* ── Content area ── */
+    .content-area {
+      position: relative;
+      height: calc(100vh - 98px);
+      overflow: hidden;
+    }
+
+    /* ── Video ── */
+    .bg-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    /* ── Overlay ── */
+    .video-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.15);
+      z-index: 1;
+    }
+
+    /* ── SHOP NOW button ── */
+    .shop-now-btn {
+      position: absolute;
+      bottom: 12%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      border: 2px solid #FFE5BB;
+      color: #FFE5BB;
+      background: transparent;
+      padding: 12px 48px;
+      font-family: 'Annai MN', sans-serif;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-block;
+      overflow: hidden;
+      transition: color 0.35s;
+      white-space: nowrap;
+    }
+
+    .shop-now-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: #FFE5BB;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s;
+      z-index: -1;
+    }
+
+    .shop-now-btn:hover {
+      color: #111;
+    }
+
+    .shop-now-btn:hover::before {
+      transform: scaleX(1);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Announcement bar -->
+  <div class="announce-bar">TASTE EVERY MOMENT</div>
+
+  <!-- Nav bar -->
+  <nav class="nav-bar">
+    <span class="nav-star">★</span>
+    <a href="index.html" class="nav-link active">HOME</a>
+    <a href="shop.html" class="nav-link">SHOP</a>
+    <div class="nav-right">
+      <a href="#" class="nav-link">CART</a>
+      <a href="#" class="nav-link">CONTACT US</a>
+      <span class="nav-star">★</span>
+    </div>
+  </nav>
+
+  <!-- Content area -->
+  <div class="content-area">
+
+    <!-- Background video -->
+    <video class="bg-video" src="home-video.mp4" autoplay muted loop playsinline></video>
+
+    <!-- Dark overlay -->
+    <div class="video-overlay"></div>
+
+    <!-- Logo stamp -->
+    <a href="index.html" class="logo-stamp">
+      <img src="logo-stamp.png" alt="Pop Time" />
+    </a>
+
+    <!-- SHOP NOW button -->
+    <a href="shop.html" class="shop-now-btn">SHOP NOW</a>
+
+  </div>
+
+  <script>
+    (function() {
+      const msgs = ['TASTE EVERY MOMENT', 'FOLLOW AND SAVE 15% YOUR FIRST PURCHASE'];
+      let i = 0;
+      const bar = document.querySelector('.announce-bar');
+      setInterval(() => { i = (i + 1) % msgs.length; bar.textContent = msgs[i]; }, 3000);
+    })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pop Time — Shop</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      overflow: hidden;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: #FFE5BB;
+    }
+
+    /* ── Announcement bar ── */
+    .announce-bar {
+      background: #F3A31D;
+      border-bottom: 2px solid #111;
+      height: 38px;
+      line-height: 38px;
+      text-align: center;
+      font-family: 'Annai MN', sans-serif;
+      font-weight: 400;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #111;
+    }
+
+    /* ── Nav bar ── */
+    .nav-bar {
+      background: #FFE5BB;
+      border-bottom: 2px solid #111;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 2cm;
+    }
+
+    .nav-star {
+      font-size: 22px;
+      color: #111;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .nav-link {
+      border: 2px solid #111;
+      padding: 8px 24px;
+      font-family: 'Annai MN', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #111;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .nav-link.active {
+      background: #111;
+      color: #FFE5BB;
+    }
+
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 2cm;
+    }
+
+    .nav-right .nav-star {
+      margin-left: 12px;
+    }
+
+    /* ── Content grid ── */
+    .shop-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      height: calc(100vh - 98px);
+      position: relative;
+    }
+
+    /* ── POP TIME logo stamp ── */
+    .logo-stamp {
+      position: absolute;
+      top: calc(80px - 2.5cm);
+      left: calc(28px - 2.5cm);
+      z-index: 50;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .logo-stamp img {
+      width: calc(192px + 1.2cm);
+      mix-blend-mode: multiply;
+    }
+
+    /* ── Shop columns ── */
+    .shop-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 0 70px;
+      background: #FFE5BB;
+      border-right: 2px solid #111;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+      transition: background 0.4s;
+    }
+
+    .shop-col:last-child {
+      border-right: none;
+    }
+
+    /* ── Stripe background images on hover ── */
+    .shop-col::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .shop-col:hover::before { opacity: 1; }
+
+    .shop-col.col-gold::before { background-image: url('stripe-gold.png'); }
+    .shop-col.col-red::before  { background-image: url('stripe-red.png'); }
+    .shop-col.col-blue::before { background-image: url('stripe-blue.png'); }
+
+    /* ── Product image ── */
+    .shop-col img {
+      max-width: 100%;
+      object-fit: contain;
+      object-position: bottom center;
+      position: relative;
+      z-index: 2;
+      transition: transform 0.3s;
+    }
+
+    .shop-col:hover img {
+      transform: translateY(-12px);
+    }
+
+    /* ── Per-column size & position ── */
+    .col-gold { padding-bottom: 70px; }
+    .col-gold img { height: calc(96vh - 1cm); transform: scale(0.99); transform-origin: bottom center; }
+    .col-gold:hover img { transform: scale(0.99) translateY(-12px); transform-origin: bottom center; }
+
+    .col-red { padding-bottom: calc(70px - 0.5cm); }
+    .col-red img { height: calc(96vh + 2.5cm); transform: scale(1.11375); transform-origin: bottom center; }
+    .col-red:hover img { transform: scale(1.11375) translateY(-12px); transform-origin: bottom center; }
+
+    .col-blue { padding-bottom: calc(70px - 1cm + 2px); }
+    .col-blue img { height: calc(96vh - 3cm); transform: scale(0.9); transform-origin: bottom center; }
+    .col-blue:hover img { transform: scale(0.9) translateY(-12px); transform-origin: bottom center; }
+
+    /* ── BUY button ── */
+    .btn-buy {
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%) translateY(8px);
+      background: #FFE5BB;
+      color: #111;
+      border: 2px solid #111;
+      font-family: 'Annai MN', sans-serif;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 9px 48px;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 10;
+      white-space: nowrap;
+      text-decoration: none;
+      display: inline-block;
+      transition: opacity 0.25s, transform 0.25s;
+    }
+
+    .shop-col:hover .btn-buy {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Announcement bar -->
+  <div class="announce-bar">TASTE EVERY MOMENT</div>
+
+  <!-- Nav bar -->
+  <nav class="nav-bar">
+    <span class="nav-star">★</span>
+    <a href="index.html" class="nav-link">HOME</a>
+    <a href="shop.html" class="nav-link active">SHOP</a>
+    <div class="nav-right">
+      <a href="#" class="nav-link">CART</a>
+      <a href="#" class="nav-link">CONTACT US</a>
+      <span class="nav-star">★</span>
+    </div>
+  </nav>
+
+  <!-- Content grid -->
+  <div class="shop-grid">
+
+    <!-- Logo stamp -->
+    <a href="index.html" class="logo-stamp">
+      <img src="logo-stamp.png" alt="Pop Time" />
+    </a>
+
+    <!-- Column 1: Gold / Family -->
+    <div class="shop-col col-gold" onclick="window.location.href='item?pkg=family'">
+      <img src="gold-closed.png" alt="Family Package" />
+      <a href="item?pkg=family" class="btn-buy" onclick="event.stopPropagation()">BUY</a>
+    </div>
+
+    <!-- Column 2: Red / Couple -->
+    <div class="shop-col col-red" onclick="window.location.href='item?pkg=couple'">
+      <img src="red-closed.png" alt="Couple Package" />
+      <a href="item?pkg=couple" class="btn-buy" onclick="event.stopPropagation()">BUY</a>
+    </div>
+
+    <!-- Column 3: Blue / Single -->
+    <div class="shop-col col-blue" onclick="window.location.href='item?pkg=single'">
+      <img src="blue-closed.png" alt="Single Package" />
+      <a href="item?pkg=single" class="btn-buy" onclick="event.stopPropagation()">BUY</a>
+    </div>
+
+  </div>
+
+  <script>
+    (function() {
+      const msgs = ['TASTE EVERY MOMENT', 'FOLLOW AND SAVE 15% YOUR FIRST PURCHASE'];
+      let i = 0;
+      const bar = document.querySelector('.announce-bar');
+      setInterval(() => { i = (i + 1) % msgs.length; bar.textContent = msgs[i]; }, 3000);
+    })();
+  </script>
+
+</body>
+</html>

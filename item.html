@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pop Time — Product</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      overflow: hidden;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ── Announcement bar ── */
+    .announce-bar {
+      background: #F3A31D;
+      border-bottom: 2px solid #111;
+      height: 38px;
+      line-height: 38px;
+      text-align: center;
+      font-family: 'Annai MN', sans-serif;
+      font-weight: 400;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #111;
+    }
+
+    /* ── Nav bar ── */
+    .nav-bar {
+      background: #FFE5BB;
+      border-bottom: 2px solid #111;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 2cm;
+    }
+
+    .nav-star {
+      font-size: 22px;
+      color: #111;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .nav-link {
+      border: 2px solid #111;
+      padding: 8px 24px;
+      font-family: 'Annai MN', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #111;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .nav-link.active {
+      background: #111;
+      color: #FFE5BB;
+    }
+
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 2cm;
+    }
+
+    .nav-right .nav-star {
+      margin-left: 12px;
+    }
+
+    /* ── POP TIME logo stamp ── */
+    .logo-stamp {
+      position: absolute;
+      top: calc(80px - 2.5cm);
+      left: calc(28px - 2.5cm);
+      z-index: 50;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .logo-stamp img {
+      width: calc(192px + 1.2cm);
+      mix-blend-mode: multiply;
+    }
+
+    /* ── Content area ── */
+    .content-area {
+      position: relative;
+      height: calc(100vh - 98px);
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+      overflow: hidden;
+    }
+
+    /* ── Stripe background layers ── */
+    .bg-stripe {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 0.45s;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .bg-stripe.active { opacity: 1; }
+
+    /* ── LEFT COL: product image ── */
+    .left-col {
+      position: absolute;
+      left: -8%;
+      bottom: 0;
+      width: 45%;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: 0;
+      overflow: visible;
+      min-height: 0;
+    }
+
+    /* ── Image wrapper ── */
+    .img-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 520px;
+      cursor: pointer;
+    }
+
+    .img-wrap img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: bottom center;
+    }
+
+    /* ── Per-package size & position (mirrors shop page) ── */
+    .pkg-family  .img-wrap { height: calc(96vh - 1cm);   transform: scale(1.4157) rotate(30deg);   transform-origin: bottom center; margin-bottom: 0; }
+    .pkg-family  .left-col { bottom: calc(-4cm + 9px); left: calc(-8% + 2cm); }
+    .pkg-couple  .img-wrap { height: calc(96vh - 1cm);   transform: scale(1.6274) rotate(30deg);   transform-origin: bottom center; margin-bottom: 0; }
+    .pkg-couple  .left-col { bottom: -4cm; left: calc(-8% + 2cm); }
+    .pkg-single  .img-wrap { height: calc(96vh - 1cm);   transform: scale(1.3378) rotate(30deg);   transform-origin: bottom center; margin-bottom: 0; }
+    .pkg-single  .left-col { bottom: -4cm; left: calc(-8% + 2cm); }
+
+    .img-closed {
+      opacity: 1;
+      transform: scale(1);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+
+    .img-open {
+      opacity: 0;
+      transform: scale(1.04) translateY(-8px);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+
+    .img-wrap:hover .img-closed {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+
+    .pkg-couple .img-closed { transform: translateY(0.5cm) scale(1); }
+    .pkg-couple .img-wrap:hover .img-closed { transform: translateY(0.5cm) scale(0.96); }
+
+    .pkg-single .img-closed { transform: translateY(0.5cm) scale(1); }
+    .pkg-single .img-wrap:hover .img-closed { transform: translateY(0.5cm) scale(0.96); }
+
+    .img-wrap:hover .img-open {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    .pkg-single .img-wrap:hover .img-open {
+      transform: scale(1.03) translateY(-10px);
+    }
+
+    /* ── Nav arrows ── */
+    .arrow-left {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 20;
+    }
+
+    .arrow-right {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 20;
+    }
+
+    .arrow-left,
+    .arrow-right {
+      font-size: 2rem;
+      color: #111;
+      text-decoration: none;
+      font-weight: 900;
+      opacity: 1;
+      line-height: 1;
+    }
+
+    /* ── RIGHT COL: detail ── */
+    .right-col {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 40px 80px 40px 80px;
+      align-self: stretch;
+      pointer-events: none;
+    }
+
+    /* ── Detail card ── */
+    .detail-card {
+      background: #FFE5BB;
+      border: 2px solid #111;
+      padding: 32px 36px;
+      width: 100%;
+      max-width: 460px;
+      pointer-events: auto;
+    }
+
+    /* Card top row */
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .card-top-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .stars {
+      font-size: 24px;
+      letter-spacing: 3px;
+      color: #111;
+    }
+
+    .reviews {
+      font-family: 'Annai MN', sans-serif;
+      font-weight: 400;
+      font-size: 11px;
+      color: #111;
+      margin-left: 8px;
+    }
+
+    .new-badge {
+      background: #111;
+      color: #FFE5BB;
+      font-family: 'Annai MN', sans-serif;
+      font-weight: 700;
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      clip-path: polygon(50% 0%, 64% 16%, 85% 15%, 84% 36%, 100% 50%, 84% 64%, 85% 85%, 64% 84%, 50% 100%, 36% 84%, 15% 85%, 16% 64%, 0% 50%, 16% 36%, 15% 15%, 36% 16%);
+    }
+
+    /* Package name */
+    #pkg-name {
+      font-family: 'Annai MN', sans-serif;
+      font-size: 36px;
+      color: #111;
+      letter-spacing: 1px;
+      line-height: 1;
+      margin: 0 0 14px;
+    }
+
+    /* Flavor text */
+    .pkg-flavor {
+      font-family: 'Annai MN', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: #111;
+      margin-bottom: 14px;
+    }
+
+    /* Weight */
+    #pkg-weight {
+      font-family: 'Annai MN', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #111;
+      margin-bottom: 14px;
+    }
+
+    /* Dividers */
+    .divider { display: none; }
+
+    /* Feature rows */
+    .feature-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .feature-check {
+      color: #111;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .feature-text {
+      font-family: 'Annai MN', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #111;
+    }
+
+    /* Price */
+    #pkg-price {
+      font-family: 'Annai MN', sans-serif;
+      font-weight: 600;
+      font-size: 20px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin: 17px 0 14px;
+      color: #111;
+    }
+
+    /* Add to cart button */
+    #btn-cart {
+      width: 100%;
+      padding: 13px;
+      border: 2px solid #111;
+      background: transparent;
+      color: #111;
+      font-family: 'Annai MN', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    #btn-cart:hover {
+      background: #111;
+      color: #FFE5BB;
+    }
+
+    /* ── Carousel transitions ── */
+    @keyframes exitToLeft {
+      from { transform: translateX(0)      translateY(0);   opacity: 1; }
+      to   { transform: translateX(-110%)  translateY(60px); opacity: 0; }
+    }
+    @keyframes exitToRight {
+      from { transform: translateX(0)     translateY(0);   opacity: 1; }
+      to   { transform: translateX(110%)  translateY(60px); opacity: 0; }
+    }
+    @keyframes enterFromRight {
+      from { transform: translateX(110%)  translateY(-60px); opacity: 0; }
+      to   { transform: translateX(0)     translateY(0);     opacity: 1; }
+    }
+    @keyframes enterFromLeft {
+      from { transform: translateX(-110%) translateY(-60px); opacity: 0; }
+      to   { transform: translateX(0)     translateY(0);     opacity: 1; }
+    }
+    .exit-left    { animation: exitToLeft    0.35s ease-in  forwards; }
+    .exit-right   { animation: exitToRight   0.35s ease-in  forwards; }
+    .enter-right  { animation: enterFromRight 0.4s ease-out forwards; }
+    .enter-left   { animation: enterFromLeft  0.4s ease-out forwards; }
+
+    /* ── Popcorn keyframes ── */
+    @keyframes popUp {
+      0%   { opacity: 1; transform: translateY(0) translateX(0) rotate(0deg) scale(0.8); }
+      100% { opacity: 1; transform: translateY(calc(var(--vy) + 110vh)) translateX(var(--vx)) rotate(var(--rot)) scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Popcorn overlay -->
+  <div id="popcorn-overlay" style="position:fixed;inset:0;z-index:9999;pointer-events:none;overflow:hidden;display:none;"></div>
+
+<!-- Announcement bar -->
+  <div class="announce-bar">TASTE EVERY MOMENT</div>
+
+  <!-- Nav bar -->
+  <nav class="nav-bar">
+    <span class="nav-star">★</span>
+    <a href="index.html" class="nav-link">HOME</a>
+    <a href="shop.html" class="nav-link active">SHOP</a>
+    <div class="nav-right">
+      <a href="#" class="nav-link">CART</a>
+      <a href="#" class="nav-link">CONTACT US</a>
+      <span class="nav-star">★</span>
+    </div>
+  </nav>
+
+  <!-- Content area -->
+  <div class="content-area" id="content-area">
+
+    <!-- Stripe background layers (pre-loaded, cross-fade) -->
+    <div class="bg-stripe" id="bg-gold" style="background-image:url('stripe-gold.png')"></div>
+    <div class="bg-stripe" id="bg-red"  style="background-image:url('stripe-red.png')"></div>
+    <div class="bg-stripe" id="bg-blue" style="background-image:url('stripe-blue.png')"></div>
+
+    <!-- Logo stamp -->
+    <a href="index.html" class="logo-stamp">
+      <img src="logo-stamp.png" alt="Pop Time" />
+    </a>
+
+    <!-- Left arrow -->
+    <a class="arrow-left" id="arrow-left" href="#">&#8592;</a>
+
+    <!-- Left col: product image -->
+    <div class="left-col">
+      <div class="img-wrap">
+        <img class="img-closed" id="img-closed" src="" alt="Package closed" />
+        <img class="img-open" id="img-open" src="" alt="Package open" />
+      </div>
+    </div>
+
+    <!-- Right arrow -->
+    <a class="arrow-right" id="arrow-right" href="#">&#8594;</a>
+
+    <!-- Right col: detail card -->
+    <div class="right-col">
+      <div class="detail-card">
+
+        <!-- Top row: stars + badge -->
+        <div class="card-top">
+          <div class="card-top-left">
+            <span class="stars">★★★★★</span>
+            <span class="reviews">22 REVIEWS</span>
+          </div>
+          <span class="new-badge">NEW</span>
+        </div>
+
+        <!-- Package name -->
+        <div id="pkg-name">SINGLES PACKAGE</div>
+
+        <!-- Flavor text -->
+        <div class="pkg-flavor">RICH, BUTTERY MOVIE THEATER FLAVOR.</div>
+
+        <!-- Weight -->
+        <div id="pkg-weight">NET WEIGHT: 150 g</div>
+
+        <hr class="divider" />
+
+        <!-- Feature rows -->
+        <div class="feature-row">
+          <div class="feature-check">✓</div>
+          <span class="feature-text">GLUTEN FREE</span>
+        </div>
+        <div class="feature-row">
+          <div class="feature-check">✓</div>
+          <span class="feature-text">NO PRESENTATIVES</span>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- Price -->
+        <div id="pkg-price">PRICE: 10$</div>
+
+        <!-- Add to cart button -->
+        <button id="btn-cart" onclick="triggerPopcorn()">ADD TO CART</button>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const PKGS = {
+      single: { name: 'SINGLES PACKAGE', weight: 'NET WEIGHT: 150 g', price: 'PRICE: 10$', stripe: 'stripe-blue.png', closed: 'blue-closed.png', open: 'blue-open.png', prev: 'family', next: 'couple' },
+      couple: { name: 'COUPLES PACKAGE', weight: 'NET WEIGHT: 250 g', price: 'PRICE: 20$', stripe: 'stripe-red.png',  closed: 'red-closed.png',  open: 'red-open.png',  prev: 'single', next: 'family' },
+      family: { name: 'FAMILY PACKAGE',  weight: 'NET WEIGHT: 350 g', price: 'PRICE: 25$', stripe: 'stripe-gold.png', closed: 'gold-closed.png', open: 'gold-open.png', prev: 'couple', next: 'single' }
+    };
+
+    function getParam() {
+      return new URLSearchParams(window.location.search).get('pkg') || 'single';
+    }
+
+    const BAR_COLORS    = { family: '#2660EF', couple: '#F3A31D', single: '#FC4D46' };
+    const STRIPE_LAYERS = { family: 'bg-gold', couple: 'bg-red',  single: 'bg-blue' };
+
+    function setStripe(key) {
+      document.querySelectorAll('.bg-stripe').forEach(el => el.classList.remove('active'));
+      const layerId = STRIPE_LAYERS[key];
+      if (layerId) document.getElementById(layerId).classList.add('active');
+    }
+
+    function loadPackage(key) {
+      const pkg  = PKGS[key] || PKGS['single'];
+      const area = document.getElementById('content-area');
+      area.classList.remove('pkg-family', 'pkg-couple', 'pkg-single');
+      area.classList.add('pkg-' + key);
+      document.getElementById('pkg-name').textContent  = pkg.name;
+      document.getElementById('pkg-weight').textContent = pkg.weight;
+      document.getElementById('pkg-price').textContent  = pkg.price;
+      document.getElementById('img-closed').src = pkg.closed;
+      document.getElementById('img-open').src   = pkg.open;
+      document.getElementById('arrow-left').href  = 'item.html?pkg=' + pkg.prev;
+      document.getElementById('arrow-right').href = 'item.html?pkg=' + pkg.next;
+      document.querySelector('.announce-bar').style.background = BAR_COLORS[key] || '#F3A31D';
+    }
+
+    let currentKey = getParam();
+    loadPackage(currentKey);
+    setStripe(currentKey);
+
+    function navigate(key, dir) {
+      const col = document.querySelector('.left-col');
+      const exitCls  = dir === 'right' ? 'exit-left'  : 'exit-right';
+      const enterCls = dir === 'right' ? 'enter-right' : 'enter-left';
+
+      // Fade stripe immediately — no position shift
+      setStripe(key);
+
+      col.classList.remove('exit-left','exit-right','enter-right','enter-left');
+      col.classList.add(exitCls);
+
+      setTimeout(() => {
+        col.classList.remove(exitCls);
+        currentKey = key;
+        loadPackage(key);
+        history.pushState({}, '', '?pkg=' + key);
+        void col.offsetWidth;
+        col.classList.add(enterCls);
+        setTimeout(() => col.classList.remove(enterCls), 450);
+      }, 350);
+    }
+
+    document.getElementById('arrow-left').addEventListener('click', function(e) {
+      e.preventDefault();
+      navigate(PKGS[currentKey].prev, 'left');
+    });
+    document.getElementById('arrow-right').addEventListener('click', function(e) {
+      e.preventDefault();
+      navigate(PKGS[currentKey].next, 'right');
+    });
+
+    /* ── Popcorn animation ── */
+    function triggerPopcorn() {
+      const overlay = document.getElementById('popcorn-overlay');
+      overlay.innerHTML = '';
+      overlay.style.display = 'block';
+
+      for (let i = 0; i < 80; i++) {
+        const k = document.createElement('img');
+        k.src = 'popcorn-kernel.png';
+        const startX = Math.random() * 100;
+        const vx     = ((Math.random() - 0.5) * 40).toFixed(1);
+        const vy     = (40 + Math.random() * 55).toFixed(1);
+        const rot    = ((Math.random() - 0.5) * 720).toFixed(0);
+        const dur    = (0.9 + Math.random() * 1.1).toFixed(2);
+        const delay  = (Math.random() * 0.45).toFixed(2);
+        const size   = (270 + Math.random() * 312).toFixed(0);
+        k.style.cssText = `position:absolute;top:-${size}px;left:${startX}vw;width:${size}px;height:${size}px;object-fit:contain;opacity:1;animation:popUp ${dur}s ${delay}s ease-in forwards;--vx:${vx}vw;--vy:${vy}vh;--rot:${rot}deg;`;
+        overlay.appendChild(k);
+      }
+
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        overlay.innerHTML = '';
+      }, 2800);
+    }
+  </script>
+
+  <script>
+    (function() {
+      const msgs = ['TASTE EVERY MOMENT', 'FOLLOW AND SAVE 15% YOUR FIRST PURCHASE'];
+      let i = 0;
+      const bar = document.querySelector('.announce-bar');
+      setInterval(() => { i = (i + 1) % msgs.length; bar.textContent = msgs[i]; }, 3000);
+    })();
+  </script>
+
+</body>
+</html>

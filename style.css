@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@700;900&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #FFE5BB;
+  --red:   #FC4D46;
+  --blue:  #2660EF;
+  --gold:  #F3A31D;
+  --black: #111111;
+}
+
+html, body { font-family: 'Nunito', sans-serif; background: var(--cream); color: var(--black); overflow-x: hidden; }
+
+/* ── ANNOUNCEMENT BAR ── */
+.announce-bar {
+  background: var(--gold);
+  text-align: center;
+  padding: 10px 24px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--black);
+  border-bottom: 2px solid var(--black);
+  position: relative; z-index: 10;
+}
+
+/* ── NAV ── */
+.site-nav {
+  background: var(--black);
+  border-bottom: 2px solid var(--black);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 60px;
+  position: relative; z-index: 10;
+}
+.nav-star { color: var(--gold); font-size: 1.2rem; flex-shrink: 0; }
+.nav-links {
+  display: flex; align-items: center;
+  gap: 0; list-style: none; flex: 1;
+  padding: 0 12px;
+}
+.nav-links li a {
+  display: block;
+  padding: 8px 22px;
+  border: 1.5px solid rgba(255,229,187,.3);
+  color: var(--cream);
+  font-weight: 900; font-size: 0.78rem;
+  text-transform: uppercase; letter-spacing: 2px;
+  text-decoration: none;
+  transition: background .2s, color .2s, border-color .2s;
+}
+.nav-links li a:hover,
+.nav-links li a.active { background: var(--cream); color: var(--black); border-color: var(--cream); }
+.nav-right { display: flex; gap: 0; margin-left: auto; }
+.nav-right a {
+  display: block;
+  padding: 8px 22px;
+  border: 1.5px solid rgba(255,229,187,.3);
+  color: var(--cream);
+  font-weight: 900; font-size: 0.78rem;
+  text-transform: uppercase; letter-spacing: 2px;
+  text-decoration: none;
+  transition: background .2s, color .2s;
+}
+.nav-right a:hover { background: var(--cream); color: var(--black); }
+
+/* ── POP TIME LOGO STAMP ── */
+.logo-stamp {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 2.2rem;
+  letter-spacing: 2px;
+  color: var(--black);
+  line-height: .85;
+  transform: rotate(-15deg);
+  display: inline-block;
+  border-bottom: 3px solid var(--black);
+  padding-bottom: 2px;
+}
+.logo-stamp span { display: block; }
+.logo-stamp-wrap {
+  position: absolute;
+  top: 20px; left: 28px;
+  z-index: 30;
+}
